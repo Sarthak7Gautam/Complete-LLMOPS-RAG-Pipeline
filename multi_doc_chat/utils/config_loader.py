@@ -1,0 +1,31 @@
+from pathlib import Path
+import os
+import yaml
+
+"""
+This code is a Smart Map. Normally, if you move your project or run it from a different terminal window, 
+Python might say "I can't find config.yaml!" This code solves that by calculating exactly where the file lives relative to the code itself.
+"""
+def _project_root() -> Path:
+    # .../utils/config_loader.py -> parents[1] == project root
+    return Path(__file__).resolve().parents[1]
+
+def load_config(config_path: str | None = None) -> dict:
+    """
+    Resolve config path reliably irrespective of CWD.
+    Priority: explicit arg > CONFIG_PATH env > <project_root>/config/config.yaml
+    """
+    env_path = os.getenv("CONFIG_PATH")
+    if config_path is None:
+        # _project_root() already points to the package root (multi_doc_chat)
+        config_path = env_path or str(_project_root() / "config" / "config.yaml")
+
+    path = Path(config_path)
+    if not path.is_absolute():
+        path = _project_root() / path
+
+    if not path.exists():
+        raise FileNotFoundError(f"Config file not found: {path}")
+
+    with open(path, "r", encoding="utf-8") as f:
+        return yaml.safe_load(f) or {}

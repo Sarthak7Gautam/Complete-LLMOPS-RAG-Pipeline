@@ -1,0 +1,26 @@
+embedding_model:
+  provider: "huggingface"
+  model_name: "sentence-transformers/all-MiniLM-L6-v2"
+
+retriever:
+  top_k: 10
+  search_type: "mmr"  
+  fetch_k: 20  
+  lambda_mult: 0.5  
+
+llm:
+  groq:
+    provider: "groq"
+    model_name: "llama-3.3-70B-versatile"
+    temperature: 0
+    max_output_tokens: 2048
+
+#search_type: "mmr": Short for Maximal Marginal Relevance. 
+#Instead of just finding the top 10 most similar things (which might all say the same thing), it tries to find results that are both relevant and diverse.
+#fetch_k: 20: The system first grabs 20 potential matches.
+#top_k: 10: It then whittles those 20 down to the final best 10 to show the AI.
+#lambda_mult: 0.5: This is the balance. 0 means "make them as different as possible," and 1 means "just give me the most similar." 0.5 is a perfect middle ground.
+
+# This file tells an app to "Use Hugging Face to read the data, use MMR search to find 10 diverse facts, and send them to Llama 3.3 on Groq to write a factual answer."
+# You could hardcode these settings directly into your Python files, but using a yaml file is a professional best practice that makes your app much more flexible.
+# In short: It turns your app into a pluggable system. Without it, your app is "hard-wired." With it, your app is "configurable."

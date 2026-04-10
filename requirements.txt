@@ -1,0 +1,7 @@
+dotenv
+langchain
+langchain-groq
+groq
+tiktoken
+langchain-community
+rapidocr-onnxruntime
