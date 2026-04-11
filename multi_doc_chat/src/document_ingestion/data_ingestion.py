@@ -26,6 +26,7 @@ def generate_session_id() -> str:
 
 
 class ChatIngestor:
+    """This class coordinates the entire flow of taking raw files and turning them into a "Retriever."""
     def __init__( self,
         temp_base: str = "data",
         faiss_base: str = "faiss_index",
@@ -120,6 +121,7 @@ SUPPORTED_EXTENSIONS = {".pdf", ".docx", ".txt"}
 
 # FAISS Manager (load-or-create)
 class FaissManager:
+    """This class handles the FAISS Vector Database. Think of it as a librarian who not only files books away but remembers exactly which ones they have already seen."""
     def __init__(self, index_dir: Path, model_loader: Optional[ModelLoader] = None):
         self.index_dir = Path(index_dir)
         self.index_dir.mkdir(parents=True, exist_ok=True)
@@ -143,6 +145,7 @@ class FaissManager:
 
     @staticmethod
     def _fingerprint(text: str, md: Dict[str, Any]) -> str:
+        """This is a clever security/efficiency feature. it creates a unique "ID" for every chunk based on its content and source file."""
         src = md.get("source") or md.get("file_path")
         rid = md.get("row_id")
         if src is not None:
@@ -150,6 +153,7 @@ class FaissManager:
         return hashlib.sha256(text.encode("utf-8")).hexdigest()
 
     def _save_meta(self):
+        """Saves a JSON file (ingested_meta.json) that acts as a "logbook" of all the fingerprints it has already stored."""
         self.meta_path.write_text(json.dumps(self._meta, ensure_ascii=False, indent=2), encoding="utf-8")
 
 
